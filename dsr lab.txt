@@ -1,0 +1,108 @@
+1.GETTING USED TO R: DESCRIBING DATA
+grades <- c(85, 90, 78, 92, 88, 76, 95, 89, 84, 91)
+mean_grade <- mean(grades)
+cat("Mean of the grades:", mean_grade, "\n")
+median_grade <- median(grades)
+cat("Median of the grades:", median_grade, "\n")
+sd_grade <- sd(grades)
+cat("Standard Deviation of the grades:", sd_grade, "\n")
+summary_stats <- summary(grades)
+cat("\nSummary of the grades:\n")
+print(summary_stats)
+
+
+2.CREATING AND DISPLAYING DATA USING R
+employee_names <- c("John Doe", "Jane Smith", "Peter Johnson", "Emily Davis", "Michael Brown")
+employee_ages <- c(30, 25, 45, 40, 35)
+employee_salaries <- c(55000, 62000, 75000, 68000, 72000)
+employee_data <- data.frame(Name = employee_names, Age = employee_ages, Salary = employee_salaries)
+print("Employee Data:")
+print(employee_data)
+
+
+3.CREATING AND MANIPULATING AN ARRAY AND LIST AN ARRAY USING R
+=>CREATING AND MANIPULATING A LIST
+students_list <- list("Alice" = "A", "Bob" = "B", "Charlie" = "C")
+cat("Original List of Students and Grades:\n")
+print(students_list)
+students_list$David <- "B+"
+cat("\nAfter adding a new student (David) with grade B+:\n")
+print(students_list)
+students_list$Bob <- NULL
+cat("\nAfter removing the student Bob:\n")
+print(students_list)
+students_list$Alice <- "A+"
+cat("\nAfter updating Alice's grade to A+:\n")
+print(students_list)
+if ("Charlie" %in% names(students_list)) {
+  cat("\nCharlie is in the list. His grade is:", students_list$Charlie, "\n")
+} else {
+  cat("\nCharlie is not in the list.\n")
+}
+cat("\nFinal List of Students and Grades:\n")
+print(students_list)
+
+=>CREATING AND MANIPULATING AN ARRAY
+students_scores <- array(c(85, 90, 75, 88, 92, 80, 78, 89, 91), dim = c(3, 3), 
+dimnames = list(c("Alice", "Bob", "Charlie"), c("Math", "Science", "English")))
+cat("\nOriginal Array of Student Scores:\n")
+print(students_scores)
+students_scores["Bob", "Science"] <- 95
+cat("\nAfter updating Bob's Science score to 95:\n")
+print(students_scores)
+new_student_scores <- c(82, 88, 84)
+students_scores <- rbind(students_scores, David = new_student_scores)
+cat("\nAfter adding a new student (David) with scores:\n")
+print(students_scores)
+students_scores <- students_scores[-which(rownames(students_scores) == "Charlie"),]
+cat("\nAfter removing Charlie from the array:\n")
+print(students_scores)
+cat("\nFinal Array of Student Scores:\n")
+print(students_scores)
+
+
+4.STRING MANIPULATIONS USING R
+library(dplyr)
+customer_data <- data.frame(
+  Name = c("Alice Johnson", "Bob Smith", "Charlie Brown"),
+  Email = c("alice.johnson@example.com", "bob.smith@example.net", "charlie.brown@example.org")
+)
+customer_data$Name_Upper <- toupper(customer_data$Name)
+customer_data$Domain <- sub(".*@", "", customer_data$Email)
+print(customer_data)
+#if there is no package named dplyr then give this command=>  install.packages("dplyr")
+
+
+5.DATA TRANSPOSE OPERATIONS IN R
+data <- data.frame(
+  Name = c("Alice", "Bob", "Charlie"),
+  Age = c(25, 30, 35),
+  Height = c(5.5, 6.0, 5.8)
+)
+print("Original Dataset:")
+print(data)
+transposed_data <- t(data)
+transposed_df <- as.data.frame(transposed_data)
+print("Transposed Dataset:")
+print(transposed_df)
+
+6.PROBABILITY DISTRIBUTIONS USING R
+mean_value <- 0
+sd_value <- 1
+random_data <- rnorm(n = 1000, mean = mean_value, sd = sd_value)
+print("Summary Statistics:")
+summary(random_data)
+hist(random_data, breaks = 30, probability = TRUE, main = "Normal Distribution (mean = 0, sd = 1)", xlab = "Value", col = "lightblue")
+curve(dnorm(x, mean = mean_value, sd = sd_value), col = "darkblue", lwd = 2, add = TRUE)
+
+7.BASIC STATISTICS IN R
+heights <- c(150, 160, 165, 170, 175, 180, 185, 190, 195, 200)
+mean_height <- mean(heights)
+cat("Mean Height:", mean_height, "\n")
+median_height <- median(heights)
+cat("Median Height:", median_height, "\n")
+sd_height <- sd(heights)
+cat("Standard Deviation of Height:", sd_height, "\n")
+weights <- c(55, 60, 63, 67, 70, 73, 76, 80, 85, 90)
+correlation_hw <- cor(heights, weights)
+cat("Correlation between Height and Weight:", correlation_hw, "\n")
