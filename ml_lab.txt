@@ -1,0 +1,243 @@
+1.
+
+
+import pandas as pd
+from sklearn.tree import DecisionTreeClassifier, plot_tree
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
+from sklearn.metrics import accuracy_score
+
+# Create the CSV file data
+data = {
+    'Day': ['D1', 'D2', 'D3', 'D4', 'D5', 'D6', 'D7', 'D8', 'D9', 'D10', 'D11', 'D12', 'D13', 'D14'],
+    'Outlook': ['Sunny', 'Sunny', 'Overcast', 'Rain', 'Rain', 'Rain', 'Overcast', 'Sunny', 'Sunny', 'Rain', 'Sunny', 'Overcast', 'Overcast', 'Rain'],
+    'Temperature': ['Hot', 'Hot', 'Hot', 'Mild', 'Cool', 'Cool', 'Cool', 'Mild', 'Cool', 'Mild', 'Mild', 'Mild', 'Hot', 'Mild'],
+    'Humidity': ['High', 'High', 'High', 'High', 'Normal', 'Normal', 'Normal', 'High', 'Normal', 'Normal', 'Normal', 'High', 'Normal', 'High'],
+    'Wind': ['Weak', 'Strong', 'Weak', 'Weak', 'Weak', 'Strong', 'Strong', 'Weak', 'Weak', 'Weak', 'Strong', 'Strong', 'Weak', 'Strong'],
+    'PlayTennis': ['No', 'No', 'Yes', 'Yes', 'Yes', 'No', 'Yes', 'No', 'Yes', 'Yes', 'Yes', 'Yes', 'Yes', 'No']
+}
+df = pd.DataFrame(data)
+df.to_csv('decision.csv', index=False)
+
+# Load the data
+df = pd.read_csv('decision.csv')
+
+# Encode categorical features
+label_encoders = {}
+for column in ['Outlook', 'Temperature', 'Humidity', 'Wind', 'PlayTennis']:
+    le = LabelEncoder()
+    df[column] = le.fit_transform(df[column])
+    label_encoders[column] = le  # Save label encoder for potential future decoding
+
+# Separate features and target
+X = df[['Outlook', 'Temperature', 'Humidity', 'Wind']]
+y = df['PlayTennis']
+
+# Split data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=42)
+
+# Train the Decision Tree model
+clf = DecisionTreeClassifier(criterion="entropy")
+clf.fit(X_train, y_train)
+
+# Plot the decision tree
+plt.figure(figsize=(12, 8))
+plot_tree(clf, feature_names=['Outlook', 'Temperature', 'Humidity', 'Wind'], class_names=label_encoders['PlayTennis'].classes_, filled=True)
+plt.show()
+
+# Predict and calculate accuracy
+y_pred = clf.predict(X_test)
+accuracy = accuracy_score(y_test, y_pred)
+print("Model Accuracy:", accuracy)
+
+
+----------------------------------------------------------------------------------------------------------------------------
+
+2.
+
+import pandas as pd
+import numpy as np
+data = pd.read_csv('ClusteringData.csv')
+points = data[['Variable1', 'Variable2']].values
+k = 2
+max_iterations = 100  # Maximum number of iterations
+np.random.seed(42)  # for reproducibility
+centroids = points[np.random.choice(points.shape[0], k, replace=False)]
+def calculate_distance(point1, point2):
+    return np.sqrt(np.sum((point1 - point2) ** 2))
+def assign_clusters(points, centroids):
+    clusters = [[] for _ in range(k)]
+    for point in points:
+        distances = [calculate_distance(point, centroid) for centroid in centroids]
+        closest_centroid = np.argmin(distances)
+        clusters[closest_centroid].append(point)
+    return clusters
+def calculate_new_centroids(clusters):
+    new_centroids = []
+    for cluster in clusters:
+        new_centroids.append(np.mean(cluster, axis=0))
+    return new_centroids
+for iteration in range(max_iterations):
+    clusters = assign_clusters(points, centroids)
+    new_centroids = calculate_new_centroids(clusters)
+    if np.allclose(centroids, new_centroids):
+        break
+    centroids = new_centroids
+print("Final Centroids:", centroids)
+for idx, cluster in enumerate(clusters):
+    print(f"Cluster {idx + 1}: {cluster}")
+
+-------------------------------------------------------------------------------------------------------------
+
+3.
+
+x = [0, 1, 2, 3, 4]
+y = [2, 3, 5, 4, 6]
+N = len(x)
+sum_x = sum(x)
+sum_y = sum(y)
+sum_x_squared = sum([xi ** 2 for xi in x])
+sum_xy = sum([x[i] * y[i] for i in range(N)])
+a = (N * sum_xy - sum_x * sum_y) / (N * sum_x_squared - sum_x ** 2)
+b = (sum_y - a * sum_x) / N
+print(f"The regression line is: y = {a:.2f}x + {b:.2f}")
+x_new = 10
+y_estimated = a * x_new + b
+print(f"Estimated value of y when x = 10: {y_estimated:.2f}")
+y_pred = [a * xi + b for xi in x]
+mse = sum([(y_pred[i] - y[i]) ** 2 for i in range(N)]) / N
+print(f"Mean Squared Error: {mse:.2f}")
+
+----------------------------------------------------------------------------------------------------------------
+
+4.
+
+dataset = [
+    {"Sky": "Sunny", "AirTemp": "Warm", "Humidity": "Normal", "Wind": "Strong", "Water": "Warm", "Forecast": "Same", "EnjoySport": "Yes"},
+    {"Sky": "Sunny", "AirTemp": "Warm", "Humidity": "High", "Wind": "Strong", "Water": "Warm", "Forecast": "Same", "EnjoySport": "Yes"},
+    {"Sky": "Rainy", "AirTemp": "Cold", "Humidity": "High", "Wind": "Strong", "Water": "Warm", "Forecast": "Change", "EnjoySport": "No"},
+    {"Sky": "Sunny", "AirTemp": "Warm", "Humidity": "High", "Wind": "Strong", "Water": "Cool", "Forecast": "Change", "EnjoySport": "Yes"},
+]
+initial_positive_example = next(example for example in dataset if example["EnjoySport"] == "Yes")
+hypothesis = {key: value for key, value in initial_positive_example.items() if key != "EnjoySport"}
+for example in dataset:
+    if example["EnjoySport"] == "Yes":
+        for attribute, value in hypothesis.items():
+            if example[attribute] != value:
+                hypothesis[attribute] = "?"
+print("Maximally Specific Hypothesis:", hypothesis)
+
+-------------------------------------------------------------------------------------------------------------------
+
+5.
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn import datasets
+from sklearn.mixture import GaussianMixture
+iris=datasets.load_iris()
+X=iris.data[:,:2]
+d=pd.DataFrame(X,columns=['Feature1','Feature2'])
+plt.figure(figsize=(8,6))
+plt.scatter(d['Feature1'],d['Feature2'],color="gray",label="data points")
+gmm=GaussianMixture(n_components=3,random_state=42,max_iter=100)
+gmm.fit(d)
+labels=gmm.predict(d)
+d['labels']=labels
+d0=d[d['labels']==0]
+d1=d[d['labels']==1]
+d2=d[d['labels']==2]
+plt.scatter(d0['Feature1'],d0['Feature2'],color="red",label="Cluster 1")
+plt.scatter(d1['Feature1'],d1['Feature2'],color="yellow",label="Cluster 2")
+plt.scatter(d2['Feature1'],d2['Feature2'],color="green",label="Cluster 3")
+plt.xlabel('Feature 1')
+plt.ylabel('Feature 2')
+plt.show()
+
+
+-------------------------------------------------------------------------------------------------------------------
+
+6.
+
+*import numpy as np
+class SVM:
+    def _init_(self, lr=0.001, lp=0.01, n_iters=1000):
+        self.lr = lr
+        self.lp = lp
+        self.n_iters = n_iters
+        self.w = None
+        self.b = None
+    def fit(self, X, y):
+        ns, nf = X.shape
+        y = np.where(y <= 0, -1, 1)
+        self.w = np.zeros(nf)
+        self.b = 0
+        for _ in range(self.n_iters):
+            for idx, xi in enumerate(X):
+                condition = y[idx] * (np.dot(xi, self.w) - self.b) >= 1
+                if condition:
+                    self.w -= self.lr * (2 * self.lp * self.w)
+                else:
+                    self.w -= self.lr * (2 * self.lp * self.w - np.dot(xi, y[idx]))
+                    self.b -= self.lr * y[idx]
+    def predict(self, X):
+        approx = np.dot(X, self.w) - self.b
+        return np.sign(approx)
+X = np.array([[1, 2],[5, 8],[1.5, 1.8],[8, 8],[1, 0.6],[9, 11],[7, 10],[8.7, 9.4],[2.3, 4],[5.5, 3],[7.7, 8.8],[6.1, 7.5]])
+y = np.array([1, 1, -1, 1, -1, 1, 1, 1, -1, -1, 1, 1])
+svm = SVM(lr=0.001, lp=0.01, n_iters=1000)
+svm.fit(X, y)
+predictions = svm.predict(X)
+print("Predictions:", predictions)
+print("Weights:", svm.w)
+print("Bias:", svm.b)
+
+
+---------------------------------------------------------------------------------------------------------------------
+
+7.
+
+import numpy as np
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from collections import Counter
+data = {
+    'Height': [158, 158, 160, 160, 163, 163, 160, 163, 165, 165, 168, 168, 168, 170, 170, 170],
+    'Weight': [58, 59, 59, 20, 60, 61, 64, 54, 61, 62, 62, 63, 66, 63, 64, 58],
+    'TShirtSize': ['M', 'M', 'M', 'M', 'M', 'M', 'L', 'M', 'L', 'L', 'L', 'L', 'L', 'L', 'L', 'L']}
+df = pd.DataFrame(data)
+tshirt_size_mapping = {'M': 0, 'L': 1}
+df['TShirtSize'] = df['TShirtSize'].map(tshirt_size_mapping)
+X = df[['Height', 'Weight']].values  # Features: Height and Weight
+y = df['TShirtSize'].values  # Target: T-shirt Size (encoded)
+train_size = int(len(X) * 0.8)
+X_train, X_test = X[:train_size], X[train_size:]
+y_train, y_test = y[:train_size], y[train_size:]
+def euclidean_distance(x1, x2):
+    return np.sqrt(np.sum((x1 - x2) ** 2))
+def knn_predict(X_train, y_train, X_test, k=3):
+    predictions = []
+    for test_point in X_test:
+        distances = []
+        for idx, train_point in enumerate(X_train):
+            distance = euclidean_distance(test_point, train_point)
+            distances.append((distance, y_train[idx]))
+        distances.sort(key=lambda x: x[0])
+        k_nearest_neighbors = distances[:k]
+        labels = [neighbor[1] for neighbor in k_nearest_neighbors]
+        majority_label = Counter(labels).most_common(1)[0][0]
+        predictions.append(majority_label)   
+    return np.array(predictions)
+new_customer = np.array([[167, 61]])  # New customer data
+predicted_size = knn_predict(X_train, y_train, new_customer, k=3)
+reverse_mapping = {0: 'M', 1: 'L'}
+predicted_size_label = reverse_mapping[predicted_size[0]]
+print("Predicted T-shirt size:", predicted_size_label)
+y_pred = knn_predict(X_test, y_test, X_test, k=3)
+accuracy = np.sum(y_pred == y_test) / len(y_test)
+print("Model Accuracy:", accuracy)
+
+
+---------------------------------------------------------------------------------------------------------------------
